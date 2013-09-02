@@ -16,6 +16,5 @@ def RND(num):
     return random.randint(1,num)
     
 def randomPlusMinus1():
-    n = random.randint(0,2)
-    n -= 1
-    return n
+    return random.randint(0,2) -1
+    

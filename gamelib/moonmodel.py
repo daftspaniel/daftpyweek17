@@ -26,18 +26,43 @@ class MoonModel(object):
         print("Adding water")
         waterlocations = self._addFeature( int(w/8), "water", True )
         print("Growing water")
-        self._growFeature("water", waterlocations, 15 + RND(5), "ground")
+        self._growFeature("water", waterlocations, int(w/16), "ground")
         
         #Make one big water body
         print("Growing Loch")
-        print(waterlocations[:-1])
-        self._growFeature("water", waterlocations[:-1], 25, "ground")
+        print([waterlocations[0]])
+        self._growFeature("water", [waterlocations[0]], int(w/2), "ground")
         
         print("Adding trees")
-        treelocations =  self._addFeature( int(w/8), "tree", True )
-        print("Growing trees")
-        self._growFeature("tree", treelocations, 10+RND(5))
+        treelocations =  self._addFeature( int(w/12), "tree", True )
         
+        print("Growing trees")
+        self._growFeature("tree", treelocations, int(w/8))
+        
+        print("Adding Snow")
+        S[int(w/2)][0] = {"snow" : True}
+        S[int(w/2)][1] = {"snow" : True}
+        S[int(w/2)][w-2] = {"snow" : True}
+        S[int(w/2)][w-1] = {"snow" : True}
+        self._growFeature("snow", [(int(w/2),2), (int(w/2),w-2), (int(w/2),w-2), (int(w/2),w-3)], 25)
+        
+        print("Adding Shore")
+        for x in range(1,w-1):
+            for y in range(1,w-1):
+                r = S[x][y]
+                if (not "water" in r):
+                    if ("water" in S[x][y+1]):
+                        r["shore"] = True
+                    if ("water" in S[x][y-1]):
+                        r["shore"] = True
+                    if ("water" in S[x+1][y]):
+                        r["shore"] = True
+                    if ("water" in S[x-1][y]):
+                        r["shore"] = True
+                    #if ("water" in r): del r["water"]
+                    
+        print("Moon created.")
+
     """
         Grow a feature optionally replacing another.
     """
@@ -52,15 +77,17 @@ class MoonModel(object):
                 tx = ws[0] + randomPlusMinus1()
                 ty = ws[1] + randomPlusMinus1()
                 try:
-                    S[tx][ty] [feature] = True
-                    #print("+")
-                    if not remove == None:
-                        #print("Remove" + remove)
-                        if remove in S[tx][ty]:
-                            del S[tx][ty][remove]
-                    NewFeatures.append( (tx,ty) )
+                    if not feature in S[tx][ty]: 
+                        S[tx][ty] [feature] = True
+                        #print("+")
+                        if not remove == None:
+                            #print("Remove" + remove)
+                            if remove in S[tx][ty]:
+                                del S[tx][ty][remove]
+                        NewFeatures.append( (tx,ty) )
                 except Exception as e:
-                    print("Exception")
+                    pass
+                    #print("Exception")
                     #print(e)
                     #print(dir(e))
     

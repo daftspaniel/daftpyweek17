@@ -54,14 +54,23 @@ def main():
 
             screen.blit(surface, (0, 0))
             pygame.display.flip()
-
-        elif GameState == 2: # Game on!
             
-            print("Game on")
+        elif GameState == 2: # Creating Moon
+            
             surface.fill(pygame.Color("black"))
             DrawText(surface, 10, 50, "Creating Your Moon...", 48, (255,0,0) )
-            screen.blit(surface, (0, 0))
-            pygame.display.flip()
+            
+            while GameState == 2:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        sys.exit()
+                time.sleep(100)
+                screen.blit(surface, (0, 0))
+                pygame.display.flip()
+            
+        elif GameState == 3: # Game on!
+            
+            print("Game on")
             #GameMs = MadScience(GameBG, screen, ScreenSize)
             #GameMs.MainLoop()
 
@@ -71,7 +80,7 @@ def main():
             #else:
             #GameState = 4
 
-        elif GameState == 3: # Game over!
+        elif GameState == 4: # Game over!
         
             surface.fill(pygame.Color("black"))
             DrawText(surface, 10, 50, "Game Over", 48, (255,0,0) )
@@ -85,7 +94,7 @@ def main():
             screen.blit(surface, (0, 0))
             pygame.display.flip()
 
-        elif GameState == 4: # Game Win
+        elif GameState == 5: # Game Win
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
