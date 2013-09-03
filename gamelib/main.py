@@ -8,7 +8,9 @@ Contains the entry point used by the run_game.py script
 import sys
 import pygame
 from pygame.locals import *
+
 from gamelib.util import *
+from gamelib.moongame import *
 
 # Globals.
 ScreenSize = [640,480]
@@ -18,16 +20,18 @@ Debug = False
 pygame.init()
 screen = pygame.display.set_mode(ScreenSize)
 pygame.display.set_caption("Moon")
-ANIMEVENT = pygame.USEREVENT+3
-DAYEVENT = pygame.USEREVENT+4
+
 pygame.time.set_timer(ANIMEVENT, int(1000))
 pygame.time.set_timer(DAYEVENT, int(60 * 1000))
+
 surface = CreateBackground(screen)
+Game = None
 
 #------
 # MAIN
 #------
 def main():
+    
     GameState = 1
     DrawText(surface, 10, 50, "Daftspaniel Presents...", 48, (255,255,255) )
     screen.blit(surface, (0, 0))
@@ -51,48 +55,50 @@ def main():
                     keystate = pygame.key.get_pressed()
                     if keystate[K_SPACE]:
                         GameState = 2
+                    if keystate[K_ESCAPE]==1:
+                        GameState = -1
 
             screen.blit(surface, (0, 0))
             pygame.display.flip()
             
         elif GameState == 2: # Creating Moon
             
+            print("Creating Moon")
+
             surface.fill(pygame.Color("black"))
             DrawText(surface, 10, 50, "Creating Your Moon...", 48, (255,0,0) )
+            screen.blit(surface, (0, 0))
+            pygame.display.flip()
+
+            Game = MoonGame(surface, screen, (640, 480) )
             
-            while GameState == 2:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        sys.exit()
-                time.sleep(100)
-                screen.blit(surface, (0, 0))
-                pygame.display.flip()
+            surface.fill(pygame.Color("black"))
+            GameState = 3
             
         elif GameState == 3: # Game on!
             
-            print("Game on")
-            #GameMs = MadScience(GameBG, screen, ScreenSize)
-            #GameMs.MainLoop()
-
-
-            #if GameMs.P1.Health<1:
-            #GameState = 3
-            #else:
-            #GameState = 4
-
+            while GameState == 3:
+                print("Game on")
+                Game.MainLoop()
+                GameState = 4
+            
         elif GameState == 4: # Game over!
-        
+            
+            print("Game over")
             surface.fill(pygame.Color("black"))
             DrawText(surface, 10, 50, "Game Over", 48, (255,0,0) )
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit()
-                elif event.type == pygame.KEYDOWN:
-                    keystate = pygame.key.get_pressed()
-                    if keystate[K_SPACE]:
-                        GameState = 1
-            screen.blit(surface, (0, 0))
-            pygame.display.flip()
+            
+            while GameState == 4:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        sys.exit()
+                    elif event.type == pygame.KEYDOWN:
+                        keystate = pygame.key.get_pressed()
+                        if keystate[K_SPACE]:
+                            GameState = 1
+                    elif event.type == ANIMEVENT:
+                        screen.blit(surface, (0, 0))
+                        pygame.display.flip()
 
         elif GameState == 5: # Game Win
 

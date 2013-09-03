@@ -1,7 +1,7 @@
 import random
 import jsonpickle
-from moonstate import MoonState
-from util import *
+
+from gamelib.util import *
 
 class MoonModel(object):
 
@@ -12,7 +12,6 @@ class MoonModel(object):
     def __init__(self, Width):
         """ Initialise """
         self.Width = Width
-        self.State = MoonState()
         self.Sectors = None
         
     def Generate(self):

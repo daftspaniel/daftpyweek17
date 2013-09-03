@@ -2,6 +2,9 @@ import random
 import pygame
 from pygame.locals import *
 
+ANIMEVENT = pygame.USEREVENT+3
+DAYEVENT = pygame.USEREVENT+4
+
 def CreateBackground(screen):
     bg = pygame.Surface(screen.get_size())
     bg = bg.convert()

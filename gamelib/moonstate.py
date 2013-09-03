@@ -1,4 +1,6 @@
-#DayPhase,Time,Danger,Size
+
+from gamelib.moonmodel import *
+
 class MoonState(object):
 
     """
@@ -7,15 +9,17 @@ class MoonState(object):
 
     def __init__(self):
         """ Initialise """
-        self.DayPhase = 0
+        self.DayPhase = 2
         self.Time = 0
         self.Danger = 0
         self.Size = 0
-
-    def __str___(self):
-        """ __str___ """
-        pass
+        self.Model = MoonModel(128)
+        self.Model.Generate()
+        self.PlayerPos = (5,5)
         
+    def CurrSector(self):
+        return self.Model.Sectors[self.PlayerPos[0]][self.PlayerPos[1]]
+
 if __name__=="__main__":
 
     # /* Exercise */
