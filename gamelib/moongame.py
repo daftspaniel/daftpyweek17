@@ -32,6 +32,14 @@ class MoonGame(object):
                         return
                     if keystate[K_m]==1:
                         self.MapOnView = not self.MapOnView
+                    elif keystate[K_w]==1:
+                        self.State.MovePlayerForward()
+                    elif keystate[K_s]==1:
+                        self.State.MovePlayerBack()
+                    elif keystate[K_a]==1:
+                        self.State.TurnLeft()
+                    elif keystate[K_d]==1:
+                        self.State.TurnRight()
                 elif event.type == ANIMEVENT:
                     if self.MapOnView == False:
                         self.DrawSector()
@@ -51,7 +59,10 @@ class MoonGame(object):
         self.Surface.fill(pygame.Color("black"))
         
         DrawGradient(self.Surface, Sky[self.State.DayPhase], Rect(0,0,640,240))
-        DrawText(self.Surface, 10, 50, "You are on the Moon...", 14, (255,0,0) )
-        DrawForeground(self.Surface, self.State, self.ScreenSize)
+        #DrawText(self.Surface, 10, 50, "You are on the Moon...", 14, (255,0,0) )
+        DrawForeground2(self.Surface, self.State, self.ScreenSize)
+        
+        if CHEAT:
+            DrawText(self.Surface, 0, 0, str(self.State.PlayerPos), 18, (0,0,0) )
         self.UpdateScreen()
         

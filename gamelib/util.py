@@ -21,3 +21,5 @@ def RND(num):
 def randomPlusMinus1():
     return random.randint(0,2) -1
     
+def returnTrue():
+    return True

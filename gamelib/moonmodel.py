@@ -23,27 +23,36 @@ class MoonModel(object):
                 
         NewWater = []
         print("Adding water")
-        waterlocations = self._addFeature( int(w/8), "water", True )
+        waterlocations = self._addFeature( int(w/8), "water", returnTrue )
         print("Growing water")
-        self._growFeature("water", waterlocations, int(w/16), "ground")
+        self._growFeature("water", waterlocations, int(w/16), returnTrue, "ground")
         
         #Make one big water body
         print("Growing Loch")
         print([waterlocations[0]])
-        self._growFeature("water", [waterlocations[0]], int(w/2), "ground")
+        self._growFeature("water", [waterlocations[0]], int(w/2), returnTrue, "ground")
         
-        print("Adding trees")
-        treelocations =  self._addFeature( int(w/12), "tree", True )
+        print("Adding trees to seed woods")
+        treelocations =  self._addFeature( int(w/12), "tree", self.rndGroundpos )
         
         print("Growing trees")
-        self._growFeature("tree", treelocations, int(w/8))
+        self._growFeature("tree", treelocations, int(w/8), self.rndGroundpos)
+        
+        print("Adding lone trees")
+        self._addFeature( w*3, "tree", self.rndGroundpos )
+        
+        print("Adding mushrooms")
+        self._addFeature( w*3, "mushroom", self.rndGroundpos )
+        
+        print("Adding flowers")
+        self._addFeature( w*3, "flowers", self.rndGroundpos )
         
         print("Adding Snow")
         S[int(w/2)][0] = {"snow" : True}
         S[int(w/2)][1] = {"snow" : True}
         S[int(w/2)][w-2] = {"snow" : True}
         S[int(w/2)][w-1] = {"snow" : True}
-        self._growFeature("snow", [(int(w/2),2), (int(w/2),w-2), (int(w/2),w-2), (int(w/2),w-3)], 25)
+        self._growFeature("snow", [(int(w/2),2), (int(w/2),w-2), (int(w/2),w-2), (int(w/2),w-3)], 25, returnTrue)
         
         print("Adding Shore")
         for x in range(1,w-1):
@@ -51,21 +60,21 @@ class MoonModel(object):
                 r = S[x][y]
                 if (not "water" in r):
                     if ("water" in S[x][y+1]):
-                        r["shore"] = True
+                        r["shore"] = self.get2rndGroundpos()
                     if ("water" in S[x][y-1]):
-                        r["shore"] = True
+                        r["shore"] = self.get2rndGroundpos()
                     if ("water" in S[x+1][y]):
-                        r["shore"] = True
+                        r["shore"] = self.get2rndGroundpos()
                     if ("water" in S[x-1][y]):
-                        r["shore"] = True
+                        r["shore"] = self.get2rndGroundpos()
                     #if ("water" in r): del r["water"]
-                    
+        
         print("Moon created.")
 
     """
         Grow a feature optionally replacing another.
     """
-    def _growFeature(self, feature, featurelocations, cycles, remove = None):
+    def _growFeature(self, feature, featurelocations, cycles, valueMaker, remove = None):
         NewFeatures = []
         S = self.Sectors
         for u in range(cycles):
@@ -77,7 +86,7 @@ class MoonModel(object):
                 ty = ws[1] + randomPlusMinus1()
                 try:
                     if not feature in S[tx][ty]: 
-                        S[tx][ty] [feature] = True
+                        S[tx][ty] [feature] = valueMaker()
                         #print("+")
                         if not remove == None:
                             #print("Remove" + remove)
@@ -90,7 +99,7 @@ class MoonModel(object):
                     #print(e)
                     #print(dir(e))
     
-    def _addFeature(self, count, label, value, maker = None):
+    def _addFeature(self, count, label, valueMaker):
         """ Add a number of items to the map """
         compcount = 0
         w = self.Width
@@ -100,10 +109,7 @@ class MoonModel(object):
             y = random.randint(1, w)-1
             r = self.Sectors[x][y]
             if not label in r:
-                if maker == None: 
-                    r[label] = value
-                else:
-                    r[label] = maker()
+                r[label] = valueMaker()
                 compcount += 1
                 locations.append( (x,y) )
         return locations
@@ -128,7 +134,13 @@ class MoonModel(object):
         """ Save """
         pickled = jsonpickle.encode(self)
         return pickled
-
+        
+    def rndGroundpos(self):
+        return (RND(100),RND(100))
+        
+    def get2rndGroundpos(self):
+        return [(RND(50),RND(100)), (60 + RND(30),RND(100))]
+        
 if __name__=="__main__":
     # /* Exercise */
     o = MoonModel(8)
